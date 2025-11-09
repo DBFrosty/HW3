@@ -19,28 +19,23 @@ std::vector<std::string> split(std::string s, std::string del) {
 std::string FORMAT = "^([\\s\\S]*)\\\\answer\\{([\\s\\S]*)\\}[\\s\\S]*\\\\topic\\{(.*)\\}[\\s\\S]*\\\\difficulty\\{(.*)\\}";
 std::regex re(FORMAT);
 
-//constructor now sets member variables from parsed params
-Problem::Problem(std::string question, std::string answer, std::string topic, int difficulty){
-    this->question = question;
-    this->answer = answer;
-    this->topic = topic;
-    this->difficulty = difficulty;
-}
+std::string Problem::getQuestion() {return question;}
+std::string Problem::getAnswer() {return answer;}
+std::string Problem::getTopic() {return topic;}
+int Problem::getDifficulty() {return difficulty;}
 
-std::string Problem::getQuestion() const {return question;}
-std::string Problem::getAnswer() const {return answer;}
-std::string Problem::getTopic() const {return topic;}
-int Problem::getDifficulty() const {return difficulty;}
-
-Problem ProblemLoader::problemParse(std::string rawProblem) {
+Problem::Problem(std::string rawProblem) {
     std::smatch match;
     if (!std::regex_search(rawProblem, match, re) == true) {
         std::cerr << "Invalid problem: " << rawProblem;
         throw std::runtime_error("Invalid problem");
     }
-    return Problem(match.str(1), match.str(2), match.str(3), std::stoi(match.str(4)));
+    question = match.str(1);
+    answer = match.str(2);
+    topic = match.str(3);
+    difficulty = std::stoi(match.str(4));
 }
-std::vector<Problem> ProblemLoader::problemList(std::string filename) {//now part of ProblemLoader class
+std::vector<Problem> Problem::problemList(std::string filename) {
     // Read problems from file
     std::ifstream file(filename);
     if (!file.is_open()) {
@@ -58,7 +53,7 @@ std::vector<Problem> ProblemLoader::problemList(std::string filename) {//now par
     // Convert strings to Problems
     std::vector<Problem> problems = {};
     for (std::string problemString : problemStrings) {
-        Problem problem = ProblemLoader::problemParse(problemString);
+        Problem problem(problemString);
         problems.push_back(problem);
     }
     return problems;
