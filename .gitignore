@@ -10,3 +10,6 @@
 *.log
 *.fls
 *.tex
+*.fdb_latexmk
+*.synctex.gz
+*.json

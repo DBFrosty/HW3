@@ -84,7 +84,7 @@ std::vector<Problem> testProblems(std::vector<Problem> bank) {
 
 int main() {
     // Read in problem list and convert to Problem objects
-    std::vector<Problem> bank = Problem::problemList(BANK);
+    std::vector<Problem> bank = ProblemLoader::problemList(BANK);//changed to use ProblemLoader class
 
     // Generate the test problems
     std::vector<Problem> test = testProblems(bank);
