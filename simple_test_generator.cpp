@@ -33,7 +33,7 @@ std::string CONTENT_HEADER = "simple_content_header.tex";
 // ****************************************************************************
 
 // Check whether a proposed test is valid according to the above constraints.
-bool valid(std::vector<Problem> test, std::set<std::string> topics) {
+bool valid(std::vector<Problem*> test, std::set<std::string> topics) {
     // Initialize metrics
     int difficulty = 0;
     std::map<std::string, int> topicCounts;
@@ -42,9 +42,10 @@ bool valid(std::vector<Problem> test, std::set<std::string> topics) {
     }
 
     // Calculate the metrics
-    for (Problem p : test) {
-        difficulty += p.getDifficulty();
-        topicCounts[p.getTopic()] += 1;
+    for (Problem* p : test) {
+        ProblemV1* pv1 = static_cast<ProblemV1*>(p);
+        difficulty += pv1->getDifficulty();
+        topicCounts[pv1->getTopic()] += 1;
     }
 
     // Check the metrics
@@ -62,11 +63,12 @@ bool valid(std::vector<Problem> test, std::set<std::string> topics) {
 
 // Given a bank of possible test problems, return randomly-chosen 
 // problems that form a valid test, according to the contraints above.
-std::vector<Problem> testProblems(std::vector<Problem> bank) {
+std::vector<Problem*> testProblems(std::vector<Problem*> bank) {
     // Determine the topics covered on the test
     std::set<std::string> topics;
-    for (Problem p : bank) {
-        topics.insert(p.getTopic());
+    for (Problem* p : bank) {
+        ProblemV1* pv1 = static_cast<ProblemV1*>(p);
+        topics.insert(pv1->getTopic());
     }
 
     // Used for random generation
@@ -75,7 +77,7 @@ std::vector<Problem> testProblems(std::vector<Problem> bank) {
 
     while (true) {
         std::shuffle(bank.begin(), bank.end(), gen);
-        std::vector<Problem> testProblems(bank.begin(), bank.begin() + NUM_PROBLEMS);
+        std::vector<Problem*> testProblems(bank.begin(), bank.begin() + NUM_PROBLEMS);
         if (valid(testProblems, topics)) {
             return testProblems;
         }
@@ -83,30 +85,31 @@ std::vector<Problem> testProblems(std::vector<Problem> bank) {
 }
 
 int main() {
-    // Read in problem list and convert to Problem objects
-    std::vector<Problem> bank = Problem::problemList(BANK);
+  ProblemLoader* loader = new ProblemV1Loader();//this is what is supposed to be swappable
+  // Read in problem list and convert to Problem objects
+  std::vector<Problem*> bank = loader->problemList(BANK);
 
-    // Generate the test problems
-    std::vector<Problem> test = testProblems(bank);
+  // Generate the test problems
+  std::vector<Problem*> test = testProblems(bank);
 
-    // Open the file to write the test to
-    std::ofstream outputFile(FILENAME); 
-    if (!outputFile.is_open()) {
-        std::cerr << "Unable to open file." << std::endl;
-        return 1;
-    }
+  // Open the file to write the test to
+  std::ofstream outputFile(FILENAME); 
+  if (!outputFile.is_open()) {
+      std::cerr << "Unable to open file." << std::endl;
+      return 1;
+  }
 
-    // Write the header to the file
-    outputFile << "\\input{" << TEX_HEADER << "}\n";
-    outputFile << "\\newcommand{\\testtitle}{" << TITLE << "}\n";
-    outputFile << "\\input{" << CONTENT_HEADER << "}\n";
+  // Write the header to the file
+  outputFile << "\\input{" << TEX_HEADER << "}\n";
+  outputFile << "\\newcommand{\\testtitle}{" << TITLE << "}\n";
+  outputFile << "\\input{" << CONTENT_HEADER << "}\n";
 
-    // Write the problems to the file
-    for (Problem problem : test) {
-        outputFile << "\\item " << problem.getQuestion() << "\n";
-    }
+  // Write the problems to the file
+  for (Problem* problem : test) {
+      outputFile << "\\item " << problem->getQuestion() << "\n";
+  }
 
-    // End the file
-    outputFile << "\\end{enumerate}\n\\end{document}";
-    outputFile.close();
+  // End the file
+  outputFile << "\\end{enumerate}\n\\end{document}";
+  outputFile.close();
 }
