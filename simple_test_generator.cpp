@@ -6,6 +6,8 @@
 #include <map>
 #include <set>
 #include "problem.h"
+#include "validate.h"
+#include "test_generator.h"
 
 // ****************************************************************************
 // Configuration details
@@ -32,65 +34,19 @@ std::string CONTENT_HEADER = "simple_content_header.tex";
 
 // ****************************************************************************
 
-// Check whether a proposed test is valid according to the above constraints.
-bool valid(std::vector<Problem*> test, std::set<std::string> topics) {
-    // Initialize metrics
-    int difficulty = 0;
-    std::map<std::string, int> topicCounts;
-    for (std::string topic : topics) {
-        topicCounts[topic] = 0;
-    }
-
-    // Calculate the metrics
-    for (Problem* p : test) {
-        ProblemV1* pv1 = static_cast<ProblemV1*>(p);
-        difficulty += pv1->getDifficulty();
-        topicCounts[pv1->getTopic()] += 1;
-    }
-
-    // Check the metrics
-    if (difficulty < MIN_DIFFICULTY || difficulty > MAX_DIFFICULTY) {
-        return false;
-    }
-    for (std::string topic : topics) {
-        int count = topicCounts[topic];
-        if (count < MIN_TOPIC || count > MAX_TOPIC) {
-            return false;
-        }
-    }
-    return true;
-}
-
-// Given a bank of possible test problems, return randomly-chosen 
-// problems that form a valid test, according to the contraints above.
-std::vector<Problem*> testProblems(std::vector<Problem*> bank) {
-    // Determine the topics covered on the test
-    std::set<std::string> topics;
-    for (Problem* p : bank) {
-        ProblemV1* pv1 = static_cast<ProblemV1*>(p);
-        topics.insert(pv1->getTopic());
-    }
-
-    // Used for random generation
-    std::random_device rd;
-    std::mt19937 gen(rd());
-
-    while (true) {
-        std::shuffle(bank.begin(), bank.end(), gen);
-        std::vector<Problem*> testProblems(bank.begin(), bank.begin() + NUM_PROBLEMS);
-        if (valid(testProblems, topics)) {
-            return testProblems;
-        }
-    }
-}
 
 int main() {
-  ProblemLoader* loader = new ProblemV1Loader();//this is what is supposed to be swappable
-  // Read in problem list and convert to Problem objects
+  //create loader
+  ProblemLoader* loader = new ProblemV1Loader();
+  //create validator
+  Validate* validator = new ValidateV1(MIN_DIFFICULTY, MAX_DIFFICULTY, MIN_TOPIC, MAX_TOPIC);
+  //create test generator using v1 validator
+  TestGenerator* generator = new TestGeneratorV1(validator, NUM_PROBLEMS);
+  
+  // Read in problem list and convert to Problem objects, using loader
   std::vector<Problem*> bank = loader->problemList(BANK);
-
-  // Generate the test problems
-  std::vector<Problem*> test = testProblems(bank);
+  // Generate test from bank using validator within generator
+  std::vector<Problem*> test = generator->generateTest(bank);
 
   // Open the file to write the test to
   std::ofstream outputFile(FILENAME); 
