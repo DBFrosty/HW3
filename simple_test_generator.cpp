@@ -6,7 +6,7 @@
 #include <map>
 #include <set>
 #include "problem.h"
-#include "validate.h"
+#include "test_validate.h"
 #include "test_generator.h"
 
 // ****************************************************************************
@@ -36,17 +36,19 @@ std::string CONTENT_HEADER = "simple_content_header.tex";
 
 
 int main() {
-  //create loader
   ProblemLoader* loader = new ProblemV1Loader();
-  //create validator
-  Validate* validator = new ValidateV1(MIN_DIFFICULTY, MAX_DIFFICULTY, MIN_TOPIC, MAX_TOPIC);
-  //create test generator using v1 validator
-  TestGenerator* generator = new TestGeneratorV1(validator, NUM_PROBLEMS);
+  Validate* validator = new Validate();
+  SelectionMethod* selectionAlgo = new RandomSelection();
+  TestGenerator* generator = new TestGenerator(validator, selectionAlgo);
+  std::vector<Constraint> constraints;
+  constraints.push_back(Constraint(MIN_TOPIC, MAX_TOPIC, new CTopic("Addition")));
+  constraints.push_back(Constraint(MIN_DIFFICULTY, MAX_DIFFICULTY, new CDifficulty()));
   
   // Read in problem list and convert to Problem objects, using loader
   std::vector<Problem*> bank = loader->problemList(BANK);
+  
   // Generate test from bank using validator within generator
-  std::vector<Problem*> test = generator->generateTest(bank);
+  std::vector<Problem*> test = generator->generateTest(bank, constraints, NUM_PROBLEMS);
 
   // Open the file to write the test to
   std::ofstream outputFile(FILENAME); 

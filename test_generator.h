@@ -1,20 +1,17 @@
-#include "validate.h"
-#include "problem.h"
 #include <vector>
-#include <set>
+#include "problem.h"
+#include "test_algorithm.h"
+#include "test_validate.h"
 
+
+//testGenerator would not need specfic versions
 class TestGenerator {
 public:
-    TestGenerator(Validate* validator);
-    virtual std::vector<Problem*> generateTest(std::vector<Problem*> bank) = 0;
-protected://derived classes can use protected variables
+    TestGenerator(Validate* validator, SelectionMethod* algorithm);
+    std::vector<Problem*> generateTest(std::vector<Problem*> bank, std::vector<Constraint> constraints, int numProblems);
+private://derived classes can use protected variables
     Validate* validator_;
+    SelectionMethod* algorithim_;
 };
 
-class TestGeneratorV1 : public TestGenerator {
-  public:
-    TestGeneratorV1(Validate* validator, int numProblems);
-    std::vector<Problem*> generateTest(std::vector<Problem*> bank) override;
-  private:
-    int numProblems_;
-};
+//test generator should not care about a v1 problem or whatever

@@ -5,34 +5,25 @@
 #include <random>
 #include <algorithm>
 #include "problem.h"
-#include "validate.h"
+#include "test_validate.h"
 #include "test_generator.h"
+#include "test_algorithm.h"
 
-TestGenerator::TestGenerator(Validate* validator) {
+TestGenerator::TestGenerator(Validate* validator, SelectionMethod* algorithm) {
     validator_ = validator;
+    algorithim_ = algorithm;
 }
 
-TestGeneratorV1::TestGeneratorV1(Validate* validator, int numProblems) 
-    : TestGenerator(validator), numProblems_(numProblems) {}
+std::vector<Problem*> TestGenerator::generateTest(std::vector<Problem*> bank, std::vector<Constraint> constraints, int numProblems) {
+    //remove this v1.gettopic() specific bs
 
-std::vector<Problem*> TestGeneratorV1::generateTest(std::vector<Problem*> bank) {
-    // Determine the topics covered on the test
-    std::set<std::string> topics;
-    for (Problem* p : bank) {
-        ProblemV1* pv1 = static_cast<ProblemV1*>(p);
-        topics.insert(pv1->getTopic());
-    }
-
-    // Used for random generation
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    
+    //SWAPPABLE ALGO GO HERE
     
     while (true) {
-        std::shuffle(bank.begin(), bank.end(), gen);
-        std::vector<Problem*> testCandidate(bank.begin(), bank.begin() + numProblems_);
-        if (validator_->valid(testCandidate, topics)) {
+        std::vector<Problem*> testCandidate = algorithim_->select(bank, numProblems);//select problems from bank
+        if (validator_->valid(testCandidate, constraints)) {//is valid
             return testCandidate;
         }
     }
+    
 }

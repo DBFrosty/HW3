@@ -9,7 +9,7 @@ class Problem {//PRODUCT INTERFACE
     virtual std::string getQuestion() const = 0;
     virtual std::string getAnswer() const = 0;
     virtual ~Problem() = default;
-  private:
+  protected:
     std::string question;
     std::string answer;
 };
@@ -22,8 +22,6 @@ class ProblemV1 : public Problem {//CONCRETE PRODUCT
     int getDifficulty() const;
     ProblemV1(std::string rawProblem);
   private:
-    std::string question;
-    std::string answer;
     std::string topic;
     int difficulty;
   };
