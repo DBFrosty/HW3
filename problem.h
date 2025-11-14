@@ -25,16 +25,6 @@ class ProblemV1 : public Problem {//CONCRETE PRODUCT
     std::string topic;
     int difficulty;
   };
-  
-class ProblemLoader {//CREATOR
-  public:
-    virtual std::vector<Problem*> problemList(std::string filename) = 0;//FACTORY METHOD
-};
-
-class ProblemV1Loader : public ProblemLoader {//CONCRETE CREATOR
-  public:
-    std::vector<Problem*> problemList(std::string filename);//FACTORY METHOD IMPLEMENTATION
-};
-    
+     
 
 #endif
