@@ -23,3 +23,25 @@ ProblemV1::ProblemV1(std::string rawProblem) {//parse and construct
   topic = match.str(3);
   difficulty = std::stoi(match.str(4));
 }
+
+////////////////////////////////////////////
+std::string ProblemV2::getQuestion() const {return question;}
+std::string ProblemV2::getAnswer() const {return answer;}
+std::string ProblemV2::getTopic() const {return topic;}
+std::string ProblemV2::getAuthor() const {return author;}
+bool ProblemV2::getIsLong() const {return isLong;}
+
+ProblemV2::ProblemV2(std::string rawProblem) {//
+    std::string FORMAT = "^([\\s\\S]*)\\\\answer\\{([\\s\\S]*)\\}[\\s\\S]*\\\\topic\\{(.*)\\}[\\s\\S]*\\\\author\\{(.*)\\}[\\s\\S]*\\\\isLong\\{(.*)\\}";
+    std::regex re(FORMAT);
+    std::smatch match;
+    if (!std::regex_search(rawProblem, match, re) == true) {
+      std::cerr << "Invalid problem: " << rawProblem;
+      throw std::runtime_error("Invalid problem");
+  }
+  question = match.str(1);
+  answer = match.str(2);
+  topic = match.str(3);
+  author = match.str(4);
+  isLong = (match.str(5) == "true");
+}
