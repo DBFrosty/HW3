@@ -26,7 +26,7 @@ std::string BANK = "arithmetic_problems.tex";
 std::string FILENAME = "simple_test.tex";
 
 // tex files to include in the test file
-std::string TEX_HEADER = "simple_tex_header.tex";
+std::string TEX_HEADER = "questions_tex_header.tex";
 std::string CONTENT_HEADER = "simple_content_header.tex";
 int NUM_PROBLEMS = 20; // The test must have 20 problems.
 
@@ -73,7 +73,8 @@ int main() {
   std::vector<Problem*> test = generator->generateTest(bank, constraints, config.NUM_PROBLEMS);
 
   // Open the file to write the test to
-  IExporter* exporter = new SimpleExporter(config);
+  //IExporter* exporter = new SimpleExporter(config);
+  IExporter* exporter = new SimpleExporterWithKeySupport(config);
 
   // Write the header to the file
   exporter->writeHeader();

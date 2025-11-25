@@ -33,6 +33,15 @@ void SimpleExporter::writeEnd() {
 
 ////////////////////////////////////////////////
 
+void SimpleExporterWithKeySupport::writeProblems(const std::vector<Problem*>& problems) {
+  for (Problem* problem : problems) {
+    outFile << "\\item \\question{" << problem->getQuestion() << "}\n";
+    outFile << "\\answer{" << problem->getAnswer() << "}\n";
+  }
+}
+
+////////////////////////////////////////////////
+
 //FancyExporter implementation
 //constructor
 FancyExporter::FancyExporter(const Config& cfg) {

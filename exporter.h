@@ -26,6 +26,13 @@ class SimpleExporter : public IExporter {
     void writeEnd() override;
 };
 
+class SimpleExporterWithKeySupport : public SimpleExporter {
+  public:
+    SimpleExporterWithKeySupport(const Config& cfg) : SimpleExporter(cfg) {}//pass construction to parent constructor
+    
+    void writeProblems(const std::vector<Problem*>& problems) override;
+};
+
 class FancyExporter : public IExporter {
   public:
     FancyExporter(const Config& cfg);
