@@ -7,11 +7,6 @@
 #include <stdexcept>
 #include "problem.h"
 
-class ProblemLoader {//CREATOR
-  public:
-  virtual std::vector<Problem*> problemList(std::string filename) = 0;//FACTORY METHOD
-};
-
 //HELPER FUNCTION
 // Split the string <s> at every occurence of the delimiter <del>.
 std::vector<std::string> split(std::string s, std::string del) {
@@ -24,6 +19,11 @@ std::vector<std::string> split(std::string s, std::string del) {
   v.push_back(s.substr(start));
   return v;
 }
+
+class ProblemLoader {//CREATOR
+  public:
+  virtual std::vector<Problem*> problemList(std::string filename) = 0;//FACTORY METHOD
+};
 
 class ProblemV1Loader : public ProblemLoader {//CONCRETE CREATOR
   public:

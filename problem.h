@@ -4,7 +4,8 @@
 #include <string>
 #include <vector>
 
-class Problem {//PRODUCT INTERFACE
+// Problem interface that ONLY promises question and answer capability
+class Problem {
   public:
     virtual std::string getQuestion() const = 0;
     virtual std::string getAnswer() const = 0;
@@ -14,25 +15,56 @@ class Problem {//PRODUCT INTERFACE
     std::string answer;
 };
 
-class ProblemV1 : public Problem {//CONCRETE PRODUCT
+// Intermediate base classes that can promise specifc capabilities
+class TopicProblem {
+  public:
+    virtual std::string getTopic() const = 0;
+    virtual ~TopicProblem() = default;
+};
+class DifficultyProblem {
+  public:
+    virtual int getDifficulty() const = 0;
+    virtual ~DifficultyProblem() = default;
+};
+class AuthorProblem {
+  public:
+    virtual std::string getAuthor() const = 0;
+    virtual ~AuthorProblem() = default;
+};
+class IsLongProblem {
+  public:
+    virtual bool getIsLong() const = 0;
+    virtual ~IsLongProblem() = default;
+};
+
+class ProblemV1 :
+  public Problem, 
+  public TopicProblem, 
+  public DifficultyProblem 
+  {
   public:
     std::string getQuestion() const override;
     std::string getAnswer() const override;
-    std::string getTopic() const;
-    int getDifficulty() const;
+    std::string getTopic() const override;
+    int getDifficulty() const override;
     ProblemV1(std::string rawProblem);
   private:
     std::string topic;
     int difficulty;
   };
   
-class ProblemV2 : public Problem {
+class ProblemV2 :
+  public Problem,
+  public TopicProblem,
+  public AuthorProblem,
+  public IsLongProblem 
+  {
   public:
     std::string getQuestion() const override;
     std::string getAnswer() const override;
-    std::string getTopic() const;
-    std::string getAuthor() const;
-    bool getIsLong() const;
+    std::string getTopic() const override;
+    std::string getAuthor() const override;
+    bool getIsLong() const override;
     ProblemV2(std::string rawProblem);
   private:
     std::string topic;

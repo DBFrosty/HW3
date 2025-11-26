@@ -18,8 +18,9 @@ class CAddition : public Constraint {
     CAddition(int min, int max) : Constraint(min, max) {}
     
     int func(Problem* problem) override {
-      const ProblemV1* pV1 = dynamic_cast<const ProblemV1*>(problem);
-      if (pV1->getTopic() == "addition") {
+      const TopicProblem* prob = dynamic_cast<const TopicProblem*>(problem);
+      // now this code works for ANY problem that promises a TopicProblem interface
+      if (prob->getTopic() == "addition") {
           return 1;
       }
       return 0;
@@ -31,8 +32,8 @@ class CSubtraction : public Constraint {
     CSubtraction(int min, int max) : Constraint(min, max) {}
     
     int func(Problem* problem) override {
-      const ProblemV1* pV1 = dynamic_cast<const ProblemV1*>(problem);
-      if (pV1->getTopic() == "subtraction") {
+      const TopicProblem* prob = dynamic_cast<const TopicProblem*>(problem);
+      if (prob->getTopic() == "subtraction") {
           return 1;
       }
       return 0;
@@ -44,8 +45,8 @@ class CMultiplication : public Constraint {
     CMultiplication(int min, int max) : Constraint(min, max) {}
     
     int func(Problem* problem) override {
-      const ProblemV1* pV1 = dynamic_cast<const ProblemV1*>(problem);
-      if (pV1->getTopic() == "multiplication") {
+      const TopicProblem* prob = dynamic_cast<const TopicProblem*>(problem);
+      if (prob->getTopic() == "multiplication") {
           return 1;
       }
       return 0;
@@ -57,8 +58,8 @@ class CDivision : public Constraint {
     CDivision(int min, int max) : Constraint(min, max) {}
     
     int func(Problem* problem) override {
-      const ProblemV1* pV1 = dynamic_cast<const ProblemV1*>(problem);
-      if (pV1->getTopic() == "division") {
+      const TopicProblem* prob = dynamic_cast<const TopicProblem*>(problem);
+      if (prob->getTopic() == "division") {
           return 1;
       }
       return 0;
@@ -70,7 +71,7 @@ class CDifficulty : public Constraint {
     CDifficulty(int min, int max) : Constraint(min, max) {}
     
     int func(Problem* problem) override {
-        const ProblemV1* pV1 = dynamic_cast<const ProblemV1*>(problem);
-        return pV1->getDifficulty();
+        const DifficultyProblem* prob = dynamic_cast<const DifficultyProblem*>(problem);
+        return prob->getDifficulty();
     } 
 };
