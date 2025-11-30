@@ -33,13 +33,17 @@ std::string FILENAME = "fancy_test.tex";
 // tex files to include in the test file
 std::string TEX_HEADER = "fancy_tex_header.tex";
 std::string CONTENT_HEADER = "fancy_content_header.tex";
-int NUM_PROBLEMS = 20; // The test must have 20 problems.
+int NUM_PROBLEMS = 10; // The test must have 10 problems.
 
 // Constraints on the problem choice.
-int MIN_TOPIC = 3; // Each topic must be covered 
-int MAX_TOPIC = 7; // by 3-7 problems.
+int MIN_TOPIC = 1; // Each topic must be covered 
+int MAX_TOPIC = 2; // by 3-7 problems.
 int MIN_DIFFICULTY = 65; // Total difficulty (using the difficulty defined 
 int MAX_DIFFICULTY = 75; // in the problem bank) must be 65-75.
+int MIN_LONG = 3; // At least 3 long problems
+int MAX_LONG = 5; // At most 5
+int MIN_AUTHOR = 1; // At least 2 problems by each author
+int MAX_AUTHOR = 2;
 
 
 
@@ -60,22 +64,22 @@ int main() {
   config.NUM_PROBLEMS = NUM_PROBLEMS;
   
   // Load problems and create generator
-  ProblemLoader* loader = new ProblemV1Loader();
+  ProblemLoader* loader = new ProblemV2Loader();
   
   Validate* validator = new Validate();
   SelectionMethod* selectionAlgo = new RandomSelection();
   TestGenerator* generator = new TestGenerator(validator, selectionAlgo);
   
-  // Add constraints
-  std::vector<Constraint*> constraints;
-  constraints.push_back(new CAddition(MIN_TOPIC, MAX_TOPIC));
-  constraints.push_back(new CSubtraction(MIN_TOPIC, MAX_TOPIC));
-  constraints.push_back(new CMultiplication(MIN_TOPIC, MAX_TOPIC));
-  constraints.push_back(new CDivision(MIN_TOPIC, MAX_TOPIC));
-  constraints.push_back(new CDifficulty(MIN_DIFFICULTY, MAX_DIFFICULTY));
-  
   // Read in problem list and convert to Problem objects, using loader
   std::vector<Problem*> bank = loader->problemList(config.BANK);
+  
+  // Add constraints
+  std::vector<Constraint*> constraints;
+  
+  insertTopicConstraints(bank, constraints, MIN_TOPIC, MAX_TOPIC);
+  insertAuthorConstraints(bank, constraints, MIN_AUTHOR, MAX_AUTHOR);
+  constraints.push_back(new CLongProblem(MIN_LONG, MAX_LONG));
+  //constraints.push_back(new CDifficulty(MIN_DIFFICULTY, MAX_DIFFICULTY));
   
   // Generate test from bank using validator within generator
   std::vector<Problem*> test = generator->generateTest(bank, constraints, config.NUM_PROBLEMS);
