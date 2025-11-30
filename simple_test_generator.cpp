@@ -58,16 +58,14 @@ int main() {
   SelectionMethod* selectionAlgo = new RandomSelection();
   TestGenerator* generator = new TestGenerator(validator, selectionAlgo);
   
-  // Add constraints
-  std::vector<Constraint*> constraints;
-  constraints.push_back(new CAddition(MIN_TOPIC, MAX_TOPIC));
-  constraints.push_back(new CSubtraction(MIN_TOPIC, MAX_TOPIC));
-  constraints.push_back(new CMultiplication(MIN_TOPIC, MAX_TOPIC));
-  constraints.push_back(new CDivision(MIN_TOPIC, MAX_TOPIC));
-  constraints.push_back(new CDifficulty(MIN_DIFFICULTY, MAX_DIFFICULTY));
-  
   // Read in problem list and convert to Problem objects, using loader
   std::vector<Problem*> bank = loader->problemList(config.BANK);
+  
+  // Add constraints
+  std::vector<Constraint*> constraints;
+  insertTopicConstraints(bank, constraints, MIN_TOPIC, MAX_TOPIC);
+  constraints.push_back(new CDifficulty(MIN_DIFFICULTY, MAX_DIFFICULTY));
+  
   
   // Generate test from bank using validator within generator
   std::vector<Problem*> test = generator->generateTest(bank, constraints, config.NUM_PROBLEMS);
