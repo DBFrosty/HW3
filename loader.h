@@ -22,14 +22,8 @@ std::vector<std::string> split(std::string s, std::string del) {
 
 class ProblemLoader {//CREATOR
   public:
-  virtual std::vector<Problem*> problemList(std::string filename) = 0;//FACTORY METHOD
-};
-
-class ProblemV1Loader : public ProblemLoader {//CONCRETE CREATOR
-  public:
-  
-    //FACTORY METHOD IMPLEMENTATION
-    std::vector<Problem*> problemList(std::string filename) override {//return vector of objects at LEAST of type Problem
+  virtual Problem* createProblem(std::string rawProblem) = 0;
+  std::vector<Problem*> problemList(std::string filename) {//return vector of objects at LEAST of type Problem
     // Read problems from file
     std::ifstream file(filename);
     if (!file.is_open()) {
@@ -47,9 +41,23 @@ class ProblemV1Loader : public ProblemLoader {//CONCRETE CREATOR
     // Convert strings to Problems
     std::vector<Problem*> problems = {};
     for (std::string problemString : problemStrings) {
-        ProblemV1* problem = new ProblemV1(problemString);
+        Problem* problem = createProblem(problemString);
         problems.push_back(problem);
     }
     return problems;
+  }
+};
+
+class ProblemV1Loader : public ProblemLoader {
+  public://actual use of factory method
+  Problem* createProblem(std::string rawProblem) override {
+      return new ProblemV1(rawProblem);
+  }
+};
+
+class ProblemV2Loader : public ProblemLoader {
+  public:
+  Problem* createProblem(std::string rawProblem) override {
+      return new ProblemV2(rawProblem);
   }
 };
