@@ -1,4 +1,5 @@
 #include "exporter.h"
+#include "problem.h"
 
 //SimpleExporter implementation
 //constructor
@@ -89,4 +90,37 @@ void FancyExporter::writeProblems(const std::vector<Problem*>& problems) {
 void FancyExporter::writeEnd() {
   outFile << "\\end{enumerate}\n\\end{document}";
   outFile.flush();
+}
+
+////////////////////////////////////////////////
+
+void FancyExporterSortWithLong::writeProblems(const std::vector<Problem*>& problems) {
+  std::vector<Problem*> longProb;
+  std::vector<Problem*> shortProb;
+  for (Problem* problem : problems) {
+    IsLongProblem* prob = dynamic_cast<IsLongProblem*>(problem);
+    if (prob->getIsLong()){
+      longProb.push_back(problem);
+    } else {
+      shortProb.push_back(problem);
+    }
+  }
+  int problem_number = 1;
+  for (Problem* problem : shortProb) {
+    if (problem_number % 2 == 1) {       // Start a new page before 
+      outFile << "\\pagebreak\n\n";      // each odd-numbered problem
+    } else {                             // Insert blank space before
+      outFile << "\\vspace{350pt}\n\n";  // each even-numbered problem
+    }
+    outFile << "\\item\\begin{tabular}[t]{p{5in} p{.3in} p{.8in}}\n";
+    outFile << problem->getQuestion();
+    outFile << "& & \\arabic{enumi}.\\hrulefill\n\\end{tabular}\n";
+    problem_number += 1;
+  }
+  for (Problem* problem : longProb) {
+    outFile << "\\pagebreak\n\n";
+    outFile << "\\item\\begin{tabular}[t]{p{5in} p{.3in} p{.8in}}\n";
+    outFile << problem->getQuestion();
+    outFile << "& & \\arabic{enumi}.\\hrulefill\n\\end{tabular}\n";
+  }
 }

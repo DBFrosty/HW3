@@ -42,3 +42,10 @@ class FancyExporter : public IExporter {
     void writeProblems(const std::vector<Problem*>& problems) override;
     void writeEnd() override;
 };
+
+class FancyExporterSortWithLong : public FancyExporter {
+  public:
+    FancyExporterSortWithLong(const Config& cfg) : FancyExporter(cfg) {}
+    
+    void writeProblems(const std::vector<Problem*>& problems) override;
+};

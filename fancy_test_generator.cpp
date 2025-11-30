@@ -25,7 +25,7 @@ std::string TITLE = "Final Exam";
 std::string FORM = "A";
 
 // Source file for problem bank
-std::string BANK = "arithmetic_problems.tex";
+std::string BANK = "math_problems.tex";
 
 // Filename for the created test
 std::string FILENAME = "fancy_test.tex";
@@ -85,7 +85,7 @@ int main() {
   std::vector<Problem*> test = generator->generateTest(bank, constraints, config.NUM_PROBLEMS);
 
   // Open the file to write the test to
-  IExporter* exporter = new FancyExporter(config);
+  IExporter* exporter = new FancyExporterSortWithLong(config);
 
   // Write the header to the file
   exporter->writeHeader();
