@@ -7,7 +7,7 @@
 //testGenerator would not need specfic versions
 class TestGenerator {
 public:
-    TestGenerator(Validate* validator, SelectionMethod* algorithm) : validator(validator), algorithim(algorithm) {}
+    TestGenerator(Validate* validator, SelectionMethod* algorithm) : validator(validator), algorithm(algorithm) {}
     
     std::vector<Problem*> generateTest(
       std::vector<Problem*> bank, 
@@ -16,15 +16,15 @@ public:
       //Topics must now be individually added as constraints
     
         while (true) {
-          std::vector<Problem*> testCandidate = algorithim->select(bank, numProblems);//select problems from bank
+          std::vector<Problem*> testCandidate = algorithm->select(bank, numProblems, constraints);//select problems from bank
           if (validator->valid(testCandidate, constraints)) {//is valid
               return testCandidate;
           }
         }
       };
-private://derived classes can use protected variables
+private:
     Validate* validator;
-    SelectionMethod* algorithim;
+    SelectionMethod* algorithm;
 };
 
 //test generator should not care about a v1 problem or whatever
